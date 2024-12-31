@@ -16,10 +16,4 @@
     <Exec Command="copy /y $(OutputPath)\..\lib\VideoVersions.dll $(OutputPath)\&#xD;&#xA;copy /y .\res\loader.exe $(OutputPath)\" />
   </Target>
 
-  <ItemGroup>
-    <None Update="res\loader.exe">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

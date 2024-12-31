@@ -25,7 +25,8 @@ namespace VideoVersions
                 FileName = "loader.exe",
                 Arguments = $"-p {dwProcessId} -d \"{Path.GetFullPath(lpDllPath)}\"",
                 UseShellExecute = true,
-                Verb = "runas"
+                Verb = "runas",
+                WindowStyle = ProcessWindowStyle.Hidden
             };
             using var process = Process.Start(psi);
             if (process is null)
