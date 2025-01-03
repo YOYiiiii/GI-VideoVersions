@@ -1,4 +1,7 @@
-﻿namespace VideoVersions
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace VideoVersions
 {
     partial class MainForm
     {

@@ -6,7 +6,6 @@
     <RootNamespace>GI_VideoVersions</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DebugType>embedded</DebugType>
 	<FileAlignment>4096</FileAlignment>
