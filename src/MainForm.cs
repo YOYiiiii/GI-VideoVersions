@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,6 +12,7 @@ namespace GI_VideoVersions
 {
     public partial class MainForm : Form
     {
+        private readonly VideoVersions versions = new();
         private readonly List<Process> blackList = [];
         private Process? genshinProc;
 
@@ -34,8 +33,9 @@ namespace GI_VideoVersions
             LabLanguage.Text = Config.LoadString(nameof(LabLanguage));
             LabGameVer.Text = Config.LoadString(nameof(LabGameVer));
             CtxItemCopy.Text = Config.LoadString(nameof(CtxItemCopy));
+            BtnMerge.Text = Config.LoadString(nameof(BtnMerge));
+            BtnExport.Text = Config.LoadString(nameof(BtnExport));
         }
-
 
         private async Task<bool> TryConnectTo(Process process)
         {
@@ -48,8 +48,8 @@ namespace GI_VideoVersions
             try
             {
                 if (!NativeHelper.LoadLibraryDll(
-                (uint)process.Id, Config.DllName, out var error))
-                    throw new Win32Exception(error);
+                    (uint)process.Id, Config.DllName, out var error))
+                    Utils.ThrowLastError(error);
                 await PipeMessage.WaitConnectAsync();
             }
             catch (Exception ex)
@@ -68,7 +68,6 @@ namespace GI_VideoVersions
             LabStatusText.ForeColor = Color.Green;
             BtnConnect.Visible = false;
             BtnDisconnect.Visible = true;
-            BtnDumpList.Visible = true;
             return true;
         }
 
@@ -82,7 +81,6 @@ namespace GI_VideoVersions
             LabStatusText.ForeColor = Color.Red;
             BtnConnect.Visible = true;
             BtnDisconnect.Visible = false;
-            BtnDumpList.Visible = false;
         }
 
         private async void CheckGenshinProcess()
@@ -102,14 +100,30 @@ namespace GI_VideoVersions
                 if (await TryConnectTo(process))
                     break;
             }
+            if (genshinProc is null) return;
+
+            try
+            {
+                VideoVersions.InitVideoFiles(genshinProc);
+                var result = await PipeMessage.NotifyListDump();
+                var other = VideoVersions.FromJson(result);
+                other.TrimVersions();
+                versions.MergeFrom(other);
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgDumpListFail")!, ex.Message));
+                Disconnect();
+            }
         }
 
         private async void CheckGenshinConnect()
         {
             var result = await PipeMessage.NotifyKeyDump();
-            if (result is null)
-                Disconnect();
-            else MergeTagKeys(result);
+            if (result is not null)
+                MergeTagKeys(result);
+            else Disconnect();
         }
 
         private void MergeTagKeys(ReadOnlySpan<byte> json)
@@ -122,6 +136,7 @@ namespace GI_VideoVersions
                     .Deserialize<Dictionary<string, ulong>>(json);
                 if (dict is null) return;
 
+                versions.MergeTagKeys(dict);
                 var toBeAdd = dict
                     .Where(kv => !ListTagKeys.Items.ContainsKey(kv.Key))
                     .Select(kv =>
@@ -193,47 +208,6 @@ namespace GI_VideoVersions
                 Disconnect();
         }
 
-        private async void BtnDumpList_Click(object sender, EventArgs e)
-        {
-            var result = await PipeMessage.NotifyListDump();
-            if (result is null)
-            {
-                Utils.ShowError(Config.LoadString("MsgDumpListFail"));
-                return;
-            }
-
-            using var dialog = new SaveFileDialog()
-            {
-                FileName = "versions.json",
-                Filter = "Json Files (*.json)|*.json|All files (*.*)|*.*",
-                DefaultExt = "json",
-            };
-            if (dialog.ShowDialog() != DialogResult.OK)
-                return;
-
-            try
-            {
-                var doc = JsonDocument.Parse(result);
-#pragma warning disable CA1869
-                var fmt = new JsonSerializerOptions()
-                {
-                    WriteIndented = true,
-                    IndentCharacter = '\t',
-                    IndentSize = 1,
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                };
-#pragma warning restore CA1869
-                File.WriteAllText(dialog.FileName,
-                    JsonSerializer.Serialize(doc, fmt));
-            }
-            catch (Exception ex)
-            {
-                Utils.ShowError(string.Format(
-                    Config.LoadString("MsgSaveFileFail")!,
-                    dialog.FileName, ex.Message));
-            }
-        }
-
         private void CtxItemCopy_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(ListTagKeys
@@ -254,6 +228,51 @@ namespace GI_VideoVersions
             LabGameVerText.Location = new(
                 LabGameVer.Location.X + LabGameVer.Width,
                 LabGameVerText.Location.Y);
+        }
+
+        private void BtnMerge_Click(object sender, EventArgs e)
+        {
+            using var dialog = new OpenFileDialog()
+            {
+                FileName = "versions.json",
+                Filter = "Json Files (*.json)|*.json|All files (*.*)|*.*",
+                DefaultExt = "json",
+            };
+            try
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var file = File.ReadAllBytes(dialog.FileName);
+                    versions.MergeFrom(VideoVersions.FromJson(file));
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgOpenFileFail")!,
+                    dialog.FileName, ex.Message));
+            }
+        }
+
+        private void BtnExport_Click(object sender, EventArgs e)
+        {
+            using var dialog = new SaveFileDialog()
+            {
+                FileName = "versions.json",
+                Filter = "Json Files (*.json)|*.json|All files (*.*)|*.*",
+                DefaultExt = "json",
+            };
+            try
+            {
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    File.WriteAllText(dialog.FileName, versions.ToJson());
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgSaveFileFail")!,
+                    dialog.FileName, ex.Message));
+            }
         }
     }
 }

@@ -42,12 +42,13 @@ namespace GI_VideoVersions
             LabStatusText = new Label();
             TxtProcessId = new TextBox();
             BtnDisconnect = new Button();
-            BtnDumpList = new Button();
+            BtnExport = new Button();
             BtnConnect = new Button();
             LabGameVer = new Label();
             LabGameVerText = new Label();
             LabLanguage = new Label();
             CmbLanguage = new ComboBox();
+            BtnMerge = new Button();
             CtxMenuCopy.SuspendLayout();
             SuspendLayout();
             // 
@@ -58,10 +59,10 @@ namespace GI_VideoVersions
             ListTagKeys.FullRowSelect = true;
             ListTagKeys.GridLines = true;
             ListTagKeys.LabelWrap = false;
-            ListTagKeys.Location = new Point(12, 148);
+            ListTagKeys.Location = new Point(12, 185);
             ListTagKeys.MultiSelect = false;
             ListTagKeys.Name = "ListTagKeys";
-            ListTagKeys.Size = new Size(358, 368);
+            ListTagKeys.Size = new Size(358, 320);
             ListTagKeys.TabIndex = 0;
             ListTagKeys.UseCompatibleStateImageBehavior = false;
             ListTagKeys.View = View.Details;
@@ -131,6 +132,7 @@ namespace GI_VideoVersions
             // 
             // BtnDisconnect
             // 
+            BtnDisconnect.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             BtnDisconnect.ForeColor = Color.IndianRed;
             BtnDisconnect.Location = new Point(330, 61);
             BtnDisconnect.Name = "BtnDisconnect";
@@ -141,18 +143,17 @@ namespace GI_VideoVersions
             BtnDisconnect.Visible = false;
             BtnDisconnect.Click += BtnDisconnect_Click;
             // 
-            // BtnDumpList
+            // BtnExport
             // 
-            BtnDumpList.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            BtnDumpList.ForeColor = SystemColors.Highlight;
-            BtnDumpList.Location = new Point(250, 105);
-            BtnDumpList.Name = "BtnDumpList";
-            BtnDumpList.Size = new Size(120, 30);
-            BtnDumpList.TabIndex = 7;
-            BtnDumpList.Text = "versions.json";
-            BtnDumpList.UseVisualStyleBackColor = true;
-            BtnDumpList.Visible = false;
-            BtnDumpList.Click += BtnDumpList_Click;
+            BtnExport.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            BtnExport.ForeColor = SystemColors.Highlight;
+            BtnExport.Location = new Point(220, 515);
+            BtnExport.Name = "BtnExport";
+            BtnExport.Size = new Size(120, 30);
+            BtnExport.TabIndex = 7;
+            BtnExport.Text = "Export...";
+            BtnExport.UseVisualStyleBackColor = true;
+            BtnExport.Click += BtnExport_Click;
             // 
             // BtnConnect
             // 
@@ -168,9 +169,9 @@ namespace GI_VideoVersions
             // 
             // LabGameVer
             // 
-            LabGameVer.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            LabGameVer.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             LabGameVer.AutoSize = true;
-            LabGameVer.Location = new Point(12, 524);
+            LabGameVer.Location = new Point(12, 150);
             LabGameVer.Name = "LabGameVer";
             LabGameVer.Size = new Size(175, 20);
             LabGameVer.TabIndex = 9;
@@ -179,13 +180,14 @@ namespace GI_VideoVersions
             // 
             // LabGameVerText
             // 
-            LabGameVerText.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            LabGameVerText.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             LabGameVerText.AutoSize = true;
             LabGameVerText.ForeColor = Color.MediumOrchid;
-            LabGameVerText.Location = new Point(193, 524);
+            LabGameVerText.Location = new Point(193, 150);
             LabGameVerText.Name = "LabGameVerText";
-            LabGameVerText.Size = new Size(0, 20);
+            LabGameVerText.Size = new Size(126, 20);
             LabGameVerText.TabIndex = 10;
+            LabGameVerText.Text = "GAME_VERSION";
             // 
             // LabLanguage
             // 
@@ -208,17 +210,30 @@ namespace GI_VideoVersions
             CmbLanguage.TabIndex = 12;
             CmbLanguage.SelectedIndexChanged += CmbLanguage_SelectedIndexChanged;
             // 
+            // BtnMerge
+            // 
+            BtnMerge.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            BtnMerge.ForeColor = SystemColors.Highlight;
+            BtnMerge.Location = new Point(50, 515);
+            BtnMerge.Name = "BtnMerge";
+            BtnMerge.Size = new Size(120, 30);
+            BtnMerge.TabIndex = 13;
+            BtnMerge.Text = "Merge...";
+            BtnMerge.UseVisualStyleBackColor = true;
+            BtnMerge.Click += BtnMerge_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(382, 553);
+            Controls.Add(BtnMerge);
             Controls.Add(CmbLanguage);
             Controls.Add(LabLanguage);
             Controls.Add(LabGameVerText);
             Controls.Add(LabGameVer);
             Controls.Add(BtnConnect);
-            Controls.Add(BtnDumpList);
+            Controls.Add(BtnExport);
             Controls.Add(BtnDisconnect);
             Controls.Add(TxtProcessId);
             Controls.Add(LabStatusText);
@@ -246,7 +261,7 @@ namespace GI_VideoVersions
         private Label LabStatusText;
         private TextBox TxtProcessId;
         private Button BtnDisconnect;
-        private Button BtnDumpList;
+        private Button BtnExport;
         private Button BtnConnect;
         private ContextMenuStrip CtxMenuCopy;
         private ToolStripMenuItem CtxItemCopy;
@@ -254,5 +269,6 @@ namespace GI_VideoVersions
         private Label LabGameVerText;
         private Label LabLanguage;
         private ComboBox CmbLanguage;
+        private Button BtnMerge;
     }
 }

@@ -3,13 +3,14 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <RootNamespace>GI_VideoVersions</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DebugType>embedded</DebugType>
 	<FileAlignment>4096</FileAlignment>
 	<LangVersion>preview</LangVersion>
+	<RootNamespace>GI_VideoVersions</RootNamespace>
+	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

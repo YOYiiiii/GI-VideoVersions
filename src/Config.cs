@@ -68,7 +68,7 @@ namespace GI_VideoVersions
                 catch (Exception ex)
                 {
                     Utils.ShowError(string.Format(
-                        Config.LoadString("MsgSaveFileFail")!,
+                        LoadString("MsgSaveFileFail")!,
                         ConfigFile, ex.Message));
                 }
             }

@@ -61,6 +61,24 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
+        ///   查找类似 导出... 的本地化字符串。
+        /// </summary>
+        internal static string BtnExport {
+            get {
+                return ResourceManager.GetString("BtnExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 合并... 的本地化字符串。
+        /// </summary>
+        internal static string BtnMerge {
+            get {
+                return ResourceManager.GetString("BtnMerge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 复制 的本地化字符串。
         /// </summary>
         internal static string CtxItemCopy {
@@ -136,7 +154,8 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 从 26236578.blk 获取 versions.json 失败！ 的本地化字符串。
+        ///   查找类似 从 26236578.blk 获取 versions.json 失败！
+        ///错误: {0} 的本地化字符串。
         /// </summary>
         internal static string MsgDumpListFail {
             get {
@@ -155,7 +174,28 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 保存文件 {0} 失败！ 的本地化字符串。
+        ///   查找类似 打开文件 {0} 失败！
+        ///错误：{1} 的本地化字符串。
+        /// </summary>
+        internal static string MsgOpenFileFail {
+            get {
+                return ResourceManager.GetString("MsgOpenFileFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 无法获取管理员权限！
+        ///请以管理员身份重新运行本程序... 的本地化字符串。
+        /// </summary>
+        internal static string MsgRequireAdmin {
+            get {
+                return ResourceManager.GetString("MsgRequireAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存文件 {0} 失败！
+        ///错误: {1} 的本地化字符串。
         /// </summary>
         internal static string MsgSaveFileFail {
             get {

@@ -119,7 +119,7 @@
     <ClInclude Include="src\il2cpp.h" />
     <ClInclude Include="src\pipe\PipeTransfer.h" />
     <ClInclude Include="src\pipe\PipeClient.h" />
-    <ClInclude Include="src\export.h" />
+    <ClInclude Include="src\exports.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

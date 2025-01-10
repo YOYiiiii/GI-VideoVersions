@@ -4,7 +4,7 @@
 #include "pipe\PipeClient.h"
 #include "PipeMessage.h"
 #include "utils.h"
-#include "export.h"
+#include "exports.h"
 
 static HANDLE hThread;
 static int heartbeat = 1;

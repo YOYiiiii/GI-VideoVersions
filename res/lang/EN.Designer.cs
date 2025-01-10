@@ -61,6 +61,24 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
+        ///   查找类似 Export... 的本地化字符串。
+        /// </summary>
+        internal static string BtnExport {
+            get {
+                return ResourceManager.GetString("BtnExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Merge... 的本地化字符串。
+        /// </summary>
+        internal static string BtnMerge {
+            get {
+                return ResourceManager.GetString("BtnMerge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Copy 的本地化字符串。
         /// </summary>
         internal static string CtxItemCopy {
@@ -136,7 +154,8 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Failed to dump versions.json from 26236578.blk! 的本地化字符串。
+        ///   查找类似 Failed to dump versions.json from 26236578.blk!
+        ///Error: {0} 的本地化字符串。
         /// </summary>
         internal static string MsgDumpListFail {
             get {
@@ -155,7 +174,28 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Failed to save file to {0}! 的本地化字符串。
+        ///   查找类似 Failed to open file {0}!
+        ///Error: {1} 的本地化字符串。
+        /// </summary>
+        internal static string MsgOpenFileFail {
+            get {
+                return ResourceManager.GetString("MsgOpenFileFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Unable to obtain administrator privileges!
+        ///Please run this program again as administrator... 的本地化字符串。
+        /// </summary>
+        internal static string MsgRequireAdmin {
+            get {
+                return ResourceManager.GetString("MsgRequireAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Failed to save file to {0}!
+        ///Error: {1} 的本地化字符串。
         /// </summary>
         internal static string MsgSaveFileFail {
             get {

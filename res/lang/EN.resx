@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BtnExport" xml:space="preserve">
+    <value>Export...</value>
+  </data>
+  <data name="BtnMerge" xml:space="preserve">
+    <value>Merge...</value>
+  </data>
   <data name="CtxItemCopy" xml:space="preserve">
     <value>Copy</value>
   </data>
@@ -145,14 +151,24 @@ Please confirm that all keys dumped have been saved!</value>
 Error: {1}</value>
   </data>
   <data name="MsgDumpListFail" xml:space="preserve">
-    <value>Failed to dump versions.json from 26236578.blk!</value>
+    <value>Failed to dump versions.json from 26236578.blk!
+Error: {0}</value>
   </data>
   <data name="MsgLoadDllFail" xml:space="preserve">
     <value>Failed to load library: {0}!
 Error: {1}</value>
   </data>
+  <data name="MsgOpenFileFail" xml:space="preserve">
+    <value>Failed to open file {0}!
+Error: {1}</value>
+  </data>
+  <data name="MsgRequireAdmin" xml:space="preserve">
+    <value>Unable to obtain administrator privileges!
+Please run this program again as administrator...</value>
+  </data>
   <data name="MsgSaveFileFail" xml:space="preserve">
-    <value>Failed to save file to {0}!</value>
+    <value>Failed to save file to {0}!
+Error: {1}</value>
   </data>
   <data name="TxtConnected" xml:space="preserve">
     <value>Connected</value>

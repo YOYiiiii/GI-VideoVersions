@@ -46,16 +46,16 @@ std::string ReadFileAllBytes(const char* fileName)
 	return result;
 }
 
-DWORD GetProcessMainThreadId(DWORD processId)
+DWORD GetProcessMainThreadId(DWORD dwProcessId)
 {
-	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, processId);
+	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD, dwProcessId);
 	if (hSnapshot == INVALID_HANDLE_VALUE)
 		return 0;
 
 	THREADENTRY32 entry{ .dwSize = sizeof(THREADENTRY32) };
 	if (Thread32First(hSnapshot,&entry))
 		do {
-			if (entry.th32OwnerProcessID == processId)
+			if (entry.th32OwnerProcessID == dwProcessId)
 			{
 				CloseHandle(hSnapshot);
 				return entry.th32ThreadID;

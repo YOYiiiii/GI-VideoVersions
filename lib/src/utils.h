@@ -7,4 +7,4 @@
 std::string MD5Hash(const char* data, size_t length);
 
 std::string ReadFileAllBytes(const char* fileName);
-DWORD GetProcessMainThreadId(DWORD processId);
+DWORD GetProcessMainThreadId(DWORD dwProcessId);

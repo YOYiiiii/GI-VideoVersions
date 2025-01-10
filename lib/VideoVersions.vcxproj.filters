@@ -40,7 +40,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\export.h">
+    <ClInclude Include="src\exports.h">
       <Filter>Head Files</Filter>
     </ClInclude>
     <ClInclude Include="src\pipe\PipeClient.h">

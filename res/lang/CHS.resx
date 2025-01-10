@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BtnExport" xml:space="preserve">
+    <value>导出...</value>
+  </data>
+  <data name="BtnMerge" xml:space="preserve">
+    <value>合并...</value>
+  </data>
   <data name="CtxItemCopy" xml:space="preserve">
     <value>复制</value>
   </data>
@@ -145,14 +151,24 @@
 错误：{1}</value>
   </data>
   <data name="MsgDumpListFail" xml:space="preserve">
-    <value>从 26236578.blk 获取 versions.json 失败！</value>
+    <value>从 26236578.blk 获取 versions.json 失败！
+错误: {0}</value>
   </data>
   <data name="MsgLoadDllFail" xml:space="preserve">
     <value>加载动态链接库 {0} 失败！
 错误：{1}</value>
   </data>
+  <data name="MsgOpenFileFail" xml:space="preserve">
+    <value>打开文件 {0} 失败！
+错误：{1}</value>
+  </data>
+  <data name="MsgRequireAdmin" xml:space="preserve">
+    <value>无法获取管理员权限！
+请以管理员身份重新运行本程序...</value>
+  </data>
   <data name="MsgSaveFileFail" xml:space="preserve">
-    <value>保存文件 {0} 失败！</value>
+    <value>保存文件 {0} 失败！
+错误: {1}</value>
   </data>
   <data name="TxtConnected" xml:space="preserve">
     <value>已连接</value>

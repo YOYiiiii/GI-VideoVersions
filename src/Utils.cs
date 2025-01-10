@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GI_VideoVersions
@@ -33,5 +36,10 @@ namespace GI_VideoVersions
             else MessageBox.Show(message?.ToString(),
                 RootNamespace, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        [DoesNotReturn]
+        public static void ThrowLastError(int error = 0)
+            => throw new Win32Exception(
+                error == 0 ? Marshal.GetLastWin32Error() : error);
     }
 }
