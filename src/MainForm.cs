@@ -10,30 +10,49 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace VideoVersions
+namespace GI_VideoVersions
 {
     public partial class MainForm : Form
     {
-        private readonly List<Process> _blackList = [];
-        private Process? _genshinProc;
+        private readonly List<Process> blackList = [];
+        private Process? genshinProc;
 
         public MainForm()
         {
             InitializeComponent();
+            LoadLanguage();
+            CmbLanguage.SelectedIndex = (int)Config.Language;
             LabGameVerText.Text = Config.GenshinVersion;
+        }
+
+        private void LoadLanguage()
+        {
+            LabProcessId.Text = Config.LoadString(nameof(LabProcessId));
+            LabStatus.Text = Config.LoadString(nameof(LabStatus));
+            LabStatusText.Text = Config.LoadString(
+                genshinProc is null ? "TxtDisconnect" : "TxtConnected");
+            LabLanguage.Text = Config.LoadString(nameof(LabLanguage));
+            LabGameVer.Text = Config.LoadString(nameof(LabGameVer));
+            CtxItemCopy.Text = Config.LoadString(nameof(CtxItemCopy));
         }
 
         private async void MainForm_Shown(object sender, EventArgs e)
         {
             while (true)
             {
-                if (_genshinProc is null)
+                if (genshinProc is null)
                     CheckGenshinProcess();
                 else
                     CheckGenshinConnect();
 
                 await Task.Delay(2000);
             }
+        }
+
+        private void CmbLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Config.Language = (Config.LanguageType)CmbLanguage.SelectedIndex;
+            LoadLanguage();
         }
 
         private async void BtnConnect_Click(object sender, EventArgs e)
@@ -62,7 +81,7 @@ namespace VideoVersions
             var result = await PipeMessage.NotifyListDump();
             if (result is null)
             {
-                Utils.ShowError("Failed to dump 26236578.blk!");
+                Utils.ShowError(Config.LoadString("MsgDumpListFail"));
                 return;
             }
 
@@ -78,44 +97,54 @@ namespace VideoVersions
             try
             {
                 var doc = JsonDocument.Parse(result);
-#pragma warning disable IDE0079
 #pragma warning disable CA1869
                 var fmt = new JsonSerializerOptions()
-#pragma warning restore CA1869
-#pragma warning restore IDE0079
                 {
                     WriteIndented = true,
                     IndentCharacter = '\t',
                     IndentSize = 1,
                     Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
                 };
+#pragma warning restore CA1869
                 File.WriteAllText(dialog.FileName,
                     JsonSerializer.Serialize(doc, fmt));
             }
-            catch
+            catch (Exception ex)
             {
-                Utils.ShowError($"Failed to save file to {dialog.FileName}!");
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgSaveFileFail")!,
+                    dialog.FileName, ex.Message));
             }
-
         }
 
         private async Task<bool> TryConnectTo(Process process)
         {
-            if (!NativeHelper.LoadLibraryDll(
-                (uint)process.Id, Config.DllName, out var error))
+            TxtProcessId.Text = process.Id.ToString();
+            TxtProcessId.ReadOnly = true;
+            LabStatusText.Text = Config.LoadString("TxtConnecting");
+            LabStatusText.ForeColor = Color.Orange;
+            BtnConnect.Enabled = false;
+
+            try
             {
-                Utils.ShowError($"Failed to connect to process: {process.Id}\n"
-                    + "Error: " + new Win32Exception(error).Message);
+                if (!NativeHelper.LoadLibraryDll(
+                (uint)process.Id, Config.DllName, out var error))
+                    throw new Win32Exception(error);
+                await PipeMessage.WaitConnectAsync();
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgConnectFail")!,
+                    process.Id, ex.Message));
+
+                Disconnect();
+                BtnConnect.Enabled = true;
                 return false;
             }
 
-            if (!await PipeMessage.TryConnectAsync())
-                return false;
-
-            _genshinProc = process;
-            TxtProcessId.Text = process.Id.ToString();
-            TxtProcessId.ReadOnly = true;
-            LabStatusText.Text = "Connected";
+            genshinProc = process;
+            LabStatusText.Text = Config.LoadString("TxtConnected");
             LabStatusText.ForeColor = Color.Green;
             BtnConnect.Visible = false;
             BtnDisconnect.Visible = true;
@@ -126,10 +155,10 @@ namespace VideoVersions
         private void Disconnect()
         {
             PipeMessage.Disconnect();
-            _genshinProc = null;
+            genshinProc = null;
             TxtProcessId.Text = "";
             TxtProcessId.ReadOnly = false;
-            LabStatusText.Text = "Disonnect";
+            LabStatusText.Text = Config.LoadString("TxtDisconnect");
             LabStatusText.ForeColor = Color.Red;
             BtnConnect.Visible = true;
             BtnDisconnect.Visible = false;
@@ -141,15 +170,15 @@ namespace VideoVersions
             if (!string.IsNullOrEmpty(TxtProcessId.Text))
                 return;
 
-            _blackList.RemoveAll(p => p.HasExited);
+            blackList.RemoveAll(p => p.HasExited);
             var processes = Process
                 .GetProcessesByName(Config.GenshinProcName)
                 .Where(x => (DateTime.Now - x.StartTime).Seconds > 10
-                         && _blackList.All(y => x.Id != y.Id));
+                         && blackList.All(y => x.Id != y.Id));
 
             foreach (var process in processes)
             {
-                _blackList.Add(process);
+                blackList.Add(process);
                 if (await TryConnectTo(process))
                     break;
             }
@@ -211,6 +240,13 @@ namespace VideoVersions
                 return;
 
             CtxMenuCopy.Show(ListTagKeys, e.Location);
+        }
+
+        private void LabGameVer_Resize(object sender, EventArgs e)
+        {
+            LabGameVerText.Location = new(
+                LabGameVer.Location.X + LabGameVer.Width,
+                LabGameVerText.Location.Y);
         }
     }
 }

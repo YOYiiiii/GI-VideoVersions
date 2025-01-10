@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace VideoVersions
+namespace GI_VideoVersions
 {
     internal static partial class Native
     {

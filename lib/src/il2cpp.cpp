@@ -8,7 +8,7 @@
 
 using namespace il2cpp;
 
-char* BaseAddress = reinterpret_cast<char*>(GetModuleHandle(0));
+static char* BaseAddress = reinterpret_cast<char*>(GetModuleHandle(0));
 namespace il2cpp
 {
 #define DO_APP_FUNC(o, r, n, p) r (*n) p = reinterpret_cast<r(*)p>(BaseAddress + o)
@@ -22,6 +22,10 @@ namespace il2cpp
 
 void DumpVersionList(ULONG_PTR Parameter)
 {
+	HANDLE hEvent = *(HANDLE*)Parameter;
+	Il2CppArray** pArray = &((Il2CppArray**)Parameter)[1];
+	*pArray = 0;
+
 	if (!*MoleMole_VideoVersions_VersionBlkPath)
 		il2cpp_runtime_class_init(*MoleMole_VideoVersions__Class);
 
@@ -30,14 +34,14 @@ void DumpVersionList(ULONG_PTR Parameter)
 		UnityEngine_ArchiveFileFormat::MiHoYoFile_Encrypted);
 	if (!bundle)
 	{
-		SetEvent(*(HANDLE*)Parameter);
+		SetEvent(hEvent);
 		return;
 	}
 
 	size_t size = UnityEngine_MiHoYoBinData_BinFileLengthInBundleByHash(bundle, 0xBF0949CB);
 	if (size <= 0)
 	{
-		SetEvent(*(HANDLE*)Parameter);
+		SetEvent(hEvent);
 		return;
 	}
 
@@ -45,15 +49,19 @@ void DumpVersionList(ULONG_PTR Parameter)
 	UnityEngine_MiHoYoBinData_ReadBinFileInBundleByHash(bundle, 0xBF0949CB, array, 0);
 	UnityEngine_AssetBundle_Unload(bundle, true);
 
-	((Il2CppArray**)Parameter)[1] = array;
-	SetEvent(*(HANDLE*)Parameter);
+	*pArray = array;
+	SetEvent(hEvent);
 }
 
 void DumpVersionTagKeys(ULONG_PTR Parameter)
 {
+	HANDLE hEvent = *(HANDLE*)Parameter;
+	Il2CppArray** pArray = &((Il2CppArray**)Parameter)[1];
+	*pArray = 0;
+
 	if (!*MoleMole_VideoVersions__tagKeys)
 	{
-		SetEvent(*(HANDLE*)Parameter);
+		SetEvent(hEvent);
 		return;
 	}
 
@@ -63,8 +71,8 @@ void DumpVersionTagKeys(ULONG_PTR Parameter)
 	auto bytes = System_Text_Encoding_GetBytes(
 		System_Text_Encoding_get_Default(), json);
 
-	((Il2CppArray**)Parameter)[1] = bytes;
-	SetEvent(*(HANDLE*)Parameter);
+	*pArray = bytes;
+	SetEvent(hEvent);
 }
 
 std::string DumpInMainThread(PAPCFUNC callback)
@@ -74,7 +82,11 @@ std::string DumpInMainThread(PAPCFUNC callback)
 	if (!hThread) return {};
 
 	HANDLE hEvent = CreateEventA(0, FALSE, FALSE, 0);
-	if (!hEvent) return {};
+	if (!hEvent)
+	{
+		CloseHandle(hThread);
+		return {};
+	}
 
 	void* param[] = { hEvent, 0 };
 	QueueUserAPC(callback, hThread, (ULONG_PTR)&param);

@@ -9,10 +9,35 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DebugType>embedded</DebugType>
 	<FileAlignment>4096</FileAlignment>
+	<LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy /y $(OutputPath)\..\lib\VideoVersions.dll $(OutputPath)\&#xD;&#xA;copy /y .\res\loader.exe $(OutputPath)\" />
   </Target>
+
+  <ItemGroup>
+    <Compile Update="res\lang\en_us.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>en_us.resx</DependentUpon>
+    </Compile>
+    <Compile Update="res\lang\zh_cn.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>zh_cn.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="res\lang\en_us.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>en_us.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="res\lang\zh_cn.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>zh_cn.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

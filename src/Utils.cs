@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace VideoVersions
+namespace GI_VideoVersions
 {
     internal static class Utils
     {

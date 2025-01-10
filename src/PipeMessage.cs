@@ -3,7 +3,7 @@ using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace VideoVersions
+namespace GI_VideoVersions
 {
     internal static class PipeMessage
     {
@@ -13,29 +13,28 @@ namespace VideoVersions
             MsgKeyDump = 0x7367339B
         }
 
-        private static readonly NamedPipeServerStream _pipeServer
+        private static readonly NamedPipeServerStream pipeServer
             = new(Config.PipeName);
 
-        public static async Task<bool> TryConnectAsync()
+        public static async Task WaitConnectAsync()
         {
             using var cts = new CancellationTokenSource();
             try
             {
-                await _pipeServer
+                await pipeServer
                     .WaitForConnectionAsync(cts.Token)
                     .WaitAsync(TimeSpan.FromSeconds(3), cts.Token);
-                return true;
             }
-            catch
+            catch (TimeoutException)
             {
                 cts.Cancel();
-                return false;
+                throw;
             }
         }
 
         public static void Disconnect()
         {
-            try { _pipeServer.Disconnect(); }
+            try { pipeServer.Disconnect(); }
             catch { }
         }
 
@@ -44,15 +43,15 @@ namespace VideoVersions
             try
             {
                 var bytes = BitConverter.GetBytes((uint)MsgType.MsgListDump);
-                await _pipeServer.WriteAsync(bytes);
-                await _pipeServer.ReadExactlyAsync(bytes);
+                await pipeServer.WriteAsync(bytes);
+                await pipeServer.ReadExactlyAsync(bytes);
                 if (BitConverter.ToUInt32(bytes) != ~(uint)MsgType.MsgListDump)
                     return null;
 
-                await _pipeServer.ReadExactlyAsync(bytes);
+                await pipeServer.ReadExactlyAsync(bytes);
                 uint size = BitConverter.ToUInt32(bytes);
                 byte[] buffer = new byte[size];
-                await _pipeServer.ReadExactlyAsync(buffer);
+                await pipeServer.ReadExactlyAsync(buffer);
                 return buffer;
             }
             catch { return null; }
@@ -63,15 +62,15 @@ namespace VideoVersions
             try
             {
                 var bytes = BitConverter.GetBytes((uint)MsgType.MsgKeyDump);
-                await _pipeServer.WriteAsync(bytes);
-                await _pipeServer.ReadExactlyAsync(bytes);
+                await pipeServer.WriteAsync(bytes);
+                await pipeServer.ReadExactlyAsync(bytes);
                 if (BitConverter.ToUInt32(bytes) != ~(uint)MsgType.MsgKeyDump)
                     return null;
 
-                await _pipeServer.ReadExactlyAsync(bytes);
+                await pipeServer.ReadExactlyAsync(bytes);
                 uint size = BitConverter.ToUInt32(bytes);
                 byte[] buffer = new byte[size];
-                await _pipeServer.ReadExactlyAsync(buffer);
+                await pipeServer.ReadExactlyAsync(buffer);
                 return buffer;
             }
             catch { return null; }
