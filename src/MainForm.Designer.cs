@@ -69,7 +69,7 @@ namespace GI_VideoVersions
             // 
             // ColTags
             // 
-            ColTags.Text = "Tag";
+            ColTags.Text = "Version";
             ColTags.Width = 120;
             // 
             // ColKeys
