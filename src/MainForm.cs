@@ -36,86 +36,6 @@ namespace GI_VideoVersions
             CtxItemCopy.Text = Config.LoadString(nameof(CtxItemCopy));
         }
 
-        private async void MainForm_Shown(object sender, EventArgs e)
-        {
-            while (true)
-            {
-                if (genshinProc is null)
-                    CheckGenshinProcess();
-                else
-                    CheckGenshinConnect();
-
-                await Task.Delay(2000);
-            }
-        }
-
-        private void CmbLanguage_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Config.Language = (Config.LanguageType)CmbLanguage.SelectedIndex;
-            LoadLanguage();
-        }
-
-        private async void BtnConnect_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                uint pid = uint.Parse(TxtProcessId.Text);
-                Process process = Process.GetProcessById((int)pid);
-                await TryConnectTo(process);
-            }
-            catch (Exception ex)
-            {
-                Utils.ShowError(ex.Message);
-            }
-        }
-
-        private void BtnDisconnect_Click(object sender, EventArgs e)
-        {
-            if (Utils.ShowConfirm("Are you sure to disconnect?\n" +
-                "The same process will not be attached repeatedly."))
-                Disconnect();
-        }
-
-        private async void BtnDumpList_Click(object sender, EventArgs e)
-        {
-            var result = await PipeMessage.NotifyListDump();
-            if (result is null)
-            {
-                Utils.ShowError(Config.LoadString("MsgDumpListFail"));
-                return;
-            }
-
-            using var dialog = new SaveFileDialog()
-            {
-                FileName = "versions.json",
-                Filter = "Json Files (*.json)|*.json|All files (*.*)|*.*",
-                DefaultExt = "json",
-            };
-            if (dialog.ShowDialog() != DialogResult.OK)
-                return;
-
-            try
-            {
-                var doc = JsonDocument.Parse(result);
-#pragma warning disable CA1869
-                var fmt = new JsonSerializerOptions()
-                {
-                    WriteIndented = true,
-                    IndentCharacter = '\t',
-                    IndentSize = 1,
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                };
-#pragma warning restore CA1869
-                File.WriteAllText(dialog.FileName,
-                    JsonSerializer.Serialize(doc, fmt));
-            }
-            catch (Exception ex)
-            {
-                Utils.ShowError(string.Format(
-                    Config.LoadString("MsgSaveFileFail")!,
-                    dialog.FileName, ex.Message));
-            }
-        }
 
         private async Task<bool> TryConnectTo(Process process)
         {
@@ -219,12 +139,99 @@ namespace GI_VideoVersions
             catch { }
         }
 
+        private async void MainForm_Shown(object sender, EventArgs e)
+        {
+            while (true)
+            {
+                if (genshinProc is null)
+                    CheckGenshinProcess();
+                else
+                    CheckGenshinConnect();
+
+                await Task.Delay(2000);
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (ListTagKeys.Items.Count > 0 &&
+                !Utils.ShowConfirm(Config.LoadString("MsgConfirmExit")))
+                e.Cancel = true;
+        }
+
+        private void CmbLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Config.Language = (Config.LanguageType)CmbLanguage.SelectedIndex;
+            LoadLanguage();
+        }
+
         private void TxtProcessId_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
                 BtnConnect_Click(sender, e);
             else if (e.KeyChar == (char)Keys.Escape)
                 TxtProcessId.Text = "";
+        }
+
+        private async void BtnConnect_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                uint pid = uint.Parse(TxtProcessId.Text);
+                Process process = Process.GetProcessById((int)pid);
+                await TryConnectTo(process);
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(ex.Message);
+            }
+        }
+
+        private void BtnDisconnect_Click(object sender, EventArgs e)
+        {
+            if (Utils.ShowConfirm(Config.LoadString("MsgConfirmDisconnect")))
+                Disconnect();
+        }
+
+        private async void BtnDumpList_Click(object sender, EventArgs e)
+        {
+            var result = await PipeMessage.NotifyListDump();
+            if (result is null)
+            {
+                Utils.ShowError(Config.LoadString("MsgDumpListFail"));
+                return;
+            }
+
+            using var dialog = new SaveFileDialog()
+            {
+                FileName = "versions.json",
+                Filter = "Json Files (*.json)|*.json|All files (*.*)|*.*",
+                DefaultExt = "json",
+            };
+            if (dialog.ShowDialog() != DialogResult.OK)
+                return;
+
+            try
+            {
+                var doc = JsonDocument.Parse(result);
+#pragma warning disable CA1869
+                var fmt = new JsonSerializerOptions()
+                {
+                    WriteIndented = true,
+                    IndentCharacter = '\t',
+                    IndentSize = 1,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+#pragma warning restore CA1869
+                File.WriteAllText(dialog.FileName,
+                    JsonSerializer.Serialize(doc, fmt));
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgSaveFileFail")!,
+                    dialog.FileName, ex.Message));
+            }
         }
 
         private void CtxItemCopy_Click(object sender, EventArgs e)

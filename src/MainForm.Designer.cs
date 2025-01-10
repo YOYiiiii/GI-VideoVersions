@@ -149,7 +149,7 @@ namespace GI_VideoVersions
             BtnDumpList.Name = "BtnDumpList";
             BtnDumpList.Size = new Size(120, 30);
             BtnDumpList.TabIndex = 7;
-            BtnDumpList.Text = "26236578.blk";
+            BtnDumpList.Text = "versions.json";
             BtnDumpList.UseVisualStyleBackColor = true;
             BtnDumpList.Visible = false;
             BtnDumpList.Click += BtnDumpList_Click;
@@ -229,6 +229,7 @@ namespace GI_VideoVersions
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "GI-VideoVersions";
+            FormClosing += MainForm_FormClosing;
             Shown += MainForm_Shown;
             CtxMenuCopy.ResumeLayout(false);
             ResumeLayout(false);

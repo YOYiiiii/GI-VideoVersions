@@ -1,5 +1,7 @@
 using System;
+using System.ComponentModel;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace GI_VideoVersions
@@ -14,8 +16,10 @@ namespace GI_VideoVersions
 
             nint hModule = Native.LoadLibraryEx(Config.DllName, 0,
                 Native.LoadLibraryFlags.DontResolveDllReferences);
-            if (hModule != 0) Application.Run(new MainForm());
-            else Utils.ShowError("Failed to load library: " + Config.DllName);
+            if (hModule == 0) Utils.ShowError(string.Format(
+                Config.LoadString("MsgLoadDllFail")!,
+                Config.DllName, new Win32Exception(Marshal.GetLastWin32Error())));
+            else Application.Run(new MainForm());
         }
     }
 }

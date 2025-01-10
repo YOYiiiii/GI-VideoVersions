@@ -132,12 +132,24 @@
   <data name="LabStatus" xml:space="preserve">
     <value>连接状态</value>
   </data>
+  <data name="MsgConfirmDisconnect" xml:space="preserve">
+    <value>确认断开连接？
+同一进程将不会重复被自动附加。</value>
+  </data>
+  <data name="MsgConfirmExit" xml:space="preserve">
+    <value>确定退出吗？
+请确认所有获取到的密钥已被保存！</value>
+  </data>
   <data name="MsgConnectFail" xml:space="preserve">
     <value>连接到进程 {0} 失败！
 错误：{1}</value>
   </data>
   <data name="MsgDumpListFail" xml:space="preserve">
-    <value>获取 26236578.blk 内容失败！</value>
+    <value>从 26236578.blk 获取 versions.json 失败！</value>
+  </data>
+  <data name="MsgLoadDllFail" xml:space="preserve">
+    <value>加载动态链接库 {0} 失败！
+错误：{1}</value>
   </data>
   <data name="MsgSaveFileFail" xml:space="preserve">
     <value>保存文件 {0} 失败！</value>

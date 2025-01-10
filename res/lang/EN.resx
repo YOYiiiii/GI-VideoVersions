@@ -132,12 +132,24 @@
   <data name="LabStatus" xml:space="preserve">
     <value>Status</value>
   </data>
+  <data name="MsgConfirmDisconnect" xml:space="preserve">
+    <value>Are you sure to disconnect?
+The same process will not be automatically attached repeatedly.</value>
+  </data>
+  <data name="MsgConfirmExit" xml:space="preserve">
+    <value>Are you sure to exit?
+Please confirm that all keys dumped have been saved!</value>
+  </data>
   <data name="MsgConnectFail" xml:space="preserve">
     <value>Failed to connect to process: {0}!
 Error: {1}</value>
   </data>
   <data name="MsgDumpListFail" xml:space="preserve">
-    <value>Failed to dump 26236578.blk!</value>
+    <value>Failed to dump versions.json from 26236578.blk!</value>
+  </data>
+  <data name="MsgLoadDllFail" xml:space="preserve">
+    <value>Failed to load library: {0}!
+Error: {1}</value>
   </data>
   <data name="MsgSaveFileFail" xml:space="preserve">
     <value>Failed to save file to {0}!</value>

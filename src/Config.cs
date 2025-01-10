@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Resources;
@@ -12,8 +13,8 @@ namespace GI_VideoVersions
     {
         public enum LanguageType
         {
-            en_us = 0,
-            zh_cn = 1
+            EN = 0,
+            CHS = 1
         }
 
         private const string ConfigFile = "config.json";
@@ -43,7 +44,15 @@ namespace GI_VideoVersions
                         .GetProperty("language")
                         .GetString()!);
                 }
-                catch { return LanguageType.en_us; }
+                catch
+                {
+                    if (Enum.TryParse(
+                        CultureInfo.CurrentCulture.ThreeLetterWindowsLanguageName,
+                        out LanguageType lang))
+                        return lang;
+
+                    return LanguageType.EN;
+                }
             }
             set
             {

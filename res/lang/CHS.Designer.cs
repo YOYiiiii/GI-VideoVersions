@@ -22,14 +22,14 @@ namespace GI_VideoVersions.res.lang {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class en_us {
+    internal class CHS {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal en_us() {
+        internal CHS() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace GI_VideoVersions.res.lang {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GI_VideoVersions.res.lang.en_us", typeof(en_us).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GI_VideoVersions.res.lang.CHS", typeof(CHS).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Copy 的本地化字符串。
+        ///   查找类似 复制 的本地化字符串。
         /// </summary>
         internal static string CtxItemCopy {
             get {
@@ -70,7 +70,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Support game version: 的本地化字符串。
+        ///   查找类似 支持的游戏版本： 的本地化字符串。
         /// </summary>
         internal static string LabGameVer {
             get {
@@ -79,7 +79,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Language 的本地化字符串。
+        ///   查找类似 显示语言 的本地化字符串。
         /// </summary>
         internal static string LabLanguage {
             get {
@@ -88,7 +88,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 ProcessId 的本地化字符串。
+        ///   查找类似 进程ID 的本地化字符串。
         /// </summary>
         internal static string LabProcessId {
             get {
@@ -97,7 +97,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Status 的本地化字符串。
+        ///   查找类似 连接状态 的本地化字符串。
         /// </summary>
         internal static string LabStatus {
             get {
@@ -106,8 +106,28 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Failed to connect to process: {0}!
-        ///Error: {1} 的本地化字符串。
+        ///   查找类似 确认断开连接？
+        ///同一进程将不会重复被自动附加。 的本地化字符串。
+        /// </summary>
+        internal static string MsgConfirmDisconnect {
+            get {
+                return ResourceManager.GetString("MsgConfirmDisconnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 确定退出吗？
+        ///请确认所有获取到的密钥已被保存！ 的本地化字符串。
+        /// </summary>
+        internal static string MsgConfirmExit {
+            get {
+                return ResourceManager.GetString("MsgConfirmExit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 连接到进程 {0} 失败！
+        ///错误：{1} 的本地化字符串。
         /// </summary>
         internal static string MsgConnectFail {
             get {
@@ -116,7 +136,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Failed to dump 26236578.blk! 的本地化字符串。
+        ///   查找类似 从 26236578.blk 获取 versions.json 失败！ 的本地化字符串。
         /// </summary>
         internal static string MsgDumpListFail {
             get {
@@ -125,7 +145,17 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Failed to save file to {0}! 的本地化字符串。
+        ///   查找类似 加载动态链接库 {0} 失败！
+        ///错误：{1} 的本地化字符串。
+        /// </summary>
+        internal static string MsgLoadDllFail {
+            get {
+                return ResourceManager.GetString("MsgLoadDllFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 保存文件 {0} 失败！ 的本地化字符串。
         /// </summary>
         internal static string MsgSaveFileFail {
             get {
@@ -134,7 +164,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Connected 的本地化字符串。
+        ///   查找类似 已连接 的本地化字符串。
         /// </summary>
         internal static string TxtConnected {
             get {
@@ -143,7 +173,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Connecting... 的本地化字符串。
+        ///   查找类似 连接中... 的本地化字符串。
         /// </summary>
         internal static string TxtConnecting {
             get {
@@ -152,7 +182,7 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
-        ///   查找类似 Disconnect 的本地化字符串。
+        ///   查找类似 未连接 的本地化字符串。
         /// </summary>
         internal static string TxtDisconnect {
             get {
