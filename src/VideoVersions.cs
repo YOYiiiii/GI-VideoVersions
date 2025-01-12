@@ -9,53 +9,93 @@ using System.Text.Json.Serialization;
 
 namespace GI_VideoVersions
 {
-    public class VideoVersionInfo(
-        string version, bool encAudio, ulong? key = null,
-        List<string>? videos = null, List<VideoVersionInfo>? videoGroups = null)
+    public class VideoVersionInfo
     {
         public static readonly List<string> VideoFiles = [];
 
-        public bool EncAudio { get; init; } = encAudio;
+        private List<string> _videos = [];
+        private List<VideoVersionInfo> _videoGroups = [];
 
-        public ulong? Key { get; set; } = key;
+        public required string Version { get; init; }
+        public ulong? Key { get; set; } = null;
+        public bool EncAudio { get; init; }
 
-        public string Version { get; init; } = version;
+        public List<string>? Videos
+        {
+            get { return _videos.Count == 0 ? null : _videos; }
+            init { if (value is not null) _videos = value; }
+        }
 
-        public List<string>? Videos { get; init; } = videos;
+        public List<VideoVersionInfo>? VideoGroups
+        {
+            get { return _videoGroups.Count == 0 ? null : _videoGroups; }
+            init { if (value is not null) _videoGroups = value; }
+        }
 
-        public List<VideoVersionInfo>? VideoGroups { get; init; } = videoGroups;
+        public static void InitVideoFiles(Process process)
+        {
+            var fileName = NativeHelper.GetProcessExecutablePath((uint)process.Id);
+            string dictory = Path.GetDirectoryName(fileName)!;
+            string name = Path.GetFileNameWithoutExtension(fileName);
+            string path = $@"{dictory}\{name}_Data\StreamingAssets\VideoAssets\StandaloneWindows64\";
+            VideoFiles.AddRange(Directory
+                .GetFiles(path, "*.usm")
+                .Select(n => Path.GetFileNameWithoutExtension(n))
+                .Except(VideoFiles));
+        }
 
         public void MergeFrom(VideoVersionInfo other)
         {
-            if (Videos?.Count > 0 && other.Videos?.Count > 0)
-                Videos.AddRange(other.Videos
-                    .Where(n => !Videos.Contains(n)));
-            if (VideoGroups?.Count > 0 && other.VideoGroups?.Count > 0)
+            if (this == other)
+                throw new ArgumentException("VideoVersionInfo cannot merge from self!");
+            if (Version != other.Version)
+                throw new ArgumentException("VideoVersionInfo cannot merge from different version!");
+
+            if (Key is null or 0) Key = other.Key;
+            _videos.AddRange(other._videos.Except(_videos));
+
+            _videoGroups.AddRange(other._videoGroups);
+            var groups = _videoGroups.GroupBy(n => n.Version);
+            foreach (var dups in groups.Where(g => g.Count() > 1))
             {
-                foreach (var group in other.VideoGroups)
+                foreach (var v in dups.Skip(1))
                 {
-                    var g = VideoGroups.Find(n => n.Version == group.Version);
-                    if (g is null) VideoGroups.Add(group);
-                    else g.MergeFrom(group);
+                    dups.First().MergeFrom(v);
+                    _videoGroups.Remove(v);
                 }
             }
         }
 
+        public bool MergeTagKey(string version, ulong key)
+        {
+            if (Version == version)
+            {
+                Key = key;
+                return true;
+            }
+            foreach (var group in _videoGroups)
+                if (group.MergeTagKey(version, key))
+                    return true;
+            return false;
+        }
+
         public void TrimVideos()
         {
-            Videos?.RemoveAll(n => !VideoFiles.Contains(n));
-            VideoGroups?.ForEach(g => g.TrimVideos());
-            VideoGroups?.RemoveAll(g => (g.Videos?.Count ?? 0) == 0);
+            _videos.RemoveAll(n => !VideoFiles.Contains(n));
+            _videoGroups.ForEach(g => g.TrimVideos());
+            _videoGroups.RemoveAll(g =>
+                g._videos.Count == 0 &&
+                g._videoGroups.Count == 0);
         }
 
         public void SortVideos()
         {
-            Videos?.Sort();
-            VideoGroups?.ForEach(g => g.SortVideos());
+            _videos.Sort();
+            _videoGroups.ForEach(g => g.SortVideos());
         }
     }
 
-    public class VideoVersions(List<VideoVersionInfo>? list = null)
+    public class VideoVersions
     {
         private static readonly JsonSerializerOptions jsonOptions = new()
         {
@@ -68,26 +108,15 @@ namespace GI_VideoVersions
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
         };
 
-        public List<VideoVersionInfo> List { get; init; } = list ?? [];
-
-        public static void InitVideoFiles(Process process)
-        {
-            var fileName = NativeHelper.GetProcessExecutablePath((uint)process.Id);
-            string dictory = Path.GetDirectoryName(fileName)!;
-            string name = Path.GetFileNameWithoutExtension(fileName);
-            string path = $@"{dictory}\{name}_Data\StreamingAssets\VideoAssets\StandaloneWindows64\";
-            VideoVersionInfo.VideoFiles.AddRange(Directory
-                .GetFiles(path, "*.usm")
-                .Select(n => Path.GetFileNameWithoutExtension(n)));
-        }
+        public List<VideoVersionInfo> List { get; init; } = [];
 
         public void TrimVersions()
         {
-            foreach (var version in List)
-                version.TrimVideos();
+            foreach (var info in List)
+                info.TrimVideos();
             List.RemoveAll(n =>
-                (n.Videos?.Count ?? 0) == 0 &&
-                (n.VideoGroups?.Count ?? 0) == 0);
+                n.Videos?.Count is null or 0 &&
+                n.VideoGroups?.Count is null or 0);
         }
 
         public void SortVersions()
@@ -101,48 +130,41 @@ namespace GI_VideoVersions
                 return a.Version.CompareTo(b.Version);
             });
 
-            foreach (var version in List)
+            foreach (var info in List)
             {
-                version.VideoGroups?.Sort((a, b) =>
+                info.VideoGroups?.Sort((a, b) =>
                 {
-                    if (int.TryParse(a.Version, out var versionA) &&
-                        int.TryParse(b.Version, out var versionB))
-                        return versionA.CompareTo(versionB);
+                    if (int.TryParse(a.Version, out var x) &&
+                        int.TryParse(b.Version, out var y))
+                        return x.CompareTo(y);
                     return a.Version.CompareTo(b.Version);
                 });
-                version.SortVideos();
-            }
-        }
-
-        public void MergeTagKeys(Dictionary<string, ulong> dict)
-        {
-            foreach (var item in dict)
-            {
-                foreach (var version in List)
-                {
-                    if (version.Version == item.Key)
-                        version.Key = item.Value;
-                    else if (version.VideoGroups != null)
-                    {
-                        foreach (var group in version.VideoGroups)
-                        {
-                            if (group.Version == item.Key)
-                                group.Key = item.Value;
-                        }
-                    }
-                }
+                info.SortVideos();
             }
         }
 
         public void MergeFrom(VideoVersions other)
         {
-            foreach (var version in other.List)
+            if (this == other)
+                throw new ArgumentException("VideoVersions cannot merge from self!");
+
+            List.AddRange(other.List);
+            var groups = List.GroupBy(n => n.Version);
+            foreach (var dups in groups.Where(g => g.Count() > 1))
             {
-                var v = List.Find(n => n.Version == version.Version);
-                if (v is null) List.Add(version);
-                else v.MergeFrom(version);
+                foreach (var v in dups.Skip(1))
+                {
+                    dups.First().MergeFrom(v);
+                    List.Remove(v);
+                }
             }
-            SortVersions();
+        }
+
+        public void MergeTagKey(string version, ulong key)
+        {
+            foreach (var info in List)
+                if (info.MergeTagKey(version, key))
+                    return;
         }
 
         public static VideoVersions FromJson(ReadOnlySpan<byte> json)

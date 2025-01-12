@@ -59,9 +59,9 @@ namespace GI_VideoVersions
                     process.Id, ex.Message));
 
                 Disconnect();
-                BtnConnect.Enabled = true;
                 return false;
             }
+            finally { BtnConnect.Enabled = true; }
 
             genshinProc = process;
             LabStatusText.Text = Config.LoadString("TxtConnected");
@@ -104,11 +104,12 @@ namespace GI_VideoVersions
 
             try
             {
-                VideoVersions.InitVideoFiles(genshinProc);
+                VideoVersionInfo.InitVideoFiles(genshinProc);
                 var result = await PipeMessage.NotifyListDump();
                 var other = VideoVersions.FromJson(result);
                 other.TrimVersions();
                 versions.MergeFrom(other);
+                versions.SortVersions();
             }
             catch (Exception ex)
             {
@@ -121,37 +122,30 @@ namespace GI_VideoVersions
         private async void CheckGenshinConnect()
         {
             var result = await PipeMessage.NotifyKeyDump();
-            if (result is not null)
-                MergeTagKeys(result);
-            else Disconnect();
-        }
-
-        private void MergeTagKeys(ReadOnlySpan<byte> json)
-        {
-            try
+            if (result is not null && result.Length != 0)
             {
-                if (json.IsEmpty) return;
+                try
+                {
+                    var dict = JsonSerializer
+                        .Deserialize<Dictionary<string, ulong>>(result);
+                    if (dict is null) return;
 
-                var dict = JsonSerializer
-                    .Deserialize<Dictionary<string, ulong>>(json);
-                if (dict is null) return;
-
-                versions.MergeTagKeys(dict);
-                var toBeAdd = dict
-                    .Where(kv => !ListTagKeys.Items.ContainsKey(kv.Key))
-                    .Select(kv =>
+                    var toAdd = dict.Where(kv => !ListTagKeys.Items.ContainsKey(kv.Key));
+                    foreach (var kv in toAdd)
                     {
+                        versions.MergeTagKey(kv.Key, kv.Value);
                         var item = new ListViewItem()
                         {
                             Name = kv.Key,
                             Text = kv.Key
                         };
                         item.SubItems.Add(kv.Value.ToString());
-                        return item;
-                    });
-                ListTagKeys.Items.AddRange([.. toBeAdd]);
+                        ListTagKeys.Items.Add(item);
+                    }
+                }
+                catch { }
             }
-            catch { }
+            else Disconnect();
         }
 
         private async void MainForm_Shown(object sender, EventArgs e)
@@ -244,6 +238,7 @@ namespace GI_VideoVersions
                 {
                     var file = File.ReadAllBytes(dialog.FileName);
                     versions.MergeFrom(VideoVersions.FromJson(file));
+                    versions.SortVersions();
                 }
             }
             catch (Exception ex)
