@@ -79,13 +79,13 @@ std::string DumpInMainThread(PAPCFUNC callback)
 {
 	DWORD tid = GetProcessMainThreadId(GetCurrentProcessId());
 	HANDLE hThread = OpenThread(THREAD_SET_CONTEXT, FALSE, tid);
-	if (!hThread) return {};
+	if (!hThread) return "{}";
 
 	HANDLE hEvent = CreateEventA(0, FALSE, FALSE, 0);
 	if (!hEvent)
 	{
 		CloseHandle(hThread);
-		return {};
+		return "{}";
 	}
 
 	void* param[] = { hEvent, 0 };
@@ -95,6 +95,6 @@ std::string DumpInMainThread(PAPCFUNC callback)
 	CloseHandle(hThread);
 
 	auto array = (Il2CppArray*)param[1];
-	if (!array) return {};
+	if (!array) return "{}";
 	return std::string(array->vector, array->max_length);
 }

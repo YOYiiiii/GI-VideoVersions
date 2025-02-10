@@ -122,30 +122,27 @@ namespace GI_VideoVersions
         private async void CheckGenshinConnect()
         {
             var result = await PipeMessage.NotifyKeyDump();
-            if (result is not null && result.Length != 0)
+            if (result is null || result.Length == 0)
             {
-                try
-                {
-                    var dict = JsonSerializer
-                        .Deserialize<Dictionary<string, ulong>>(result);
-                    if (dict is null) return;
-
-                    var toAdd = dict.Where(kv => !ListTagKeys.Items.ContainsKey(kv.Key));
-                    foreach (var kv in toAdd)
-                    {
-                        versions.MergeTagKey(kv.Key, kv.Value);
-                        var item = new ListViewItem()
-                        {
-                            Name = kv.Key,
-                            Text = kv.Key
-                        };
-                        item.SubItems.Add(kv.Value.ToString());
-                        ListTagKeys.Items.Add(item);
-                    }
-                }
-                catch { }
+                Disconnect();
+                return;
             }
-            else Disconnect();
+            try
+            {
+                var dict = JsonSerializer
+                    .Deserialize<Dictionary<string, ulong>>(result);
+                if (dict is null) return;
+
+                var toAdd = dict.Where(kv => !ListTagKeys.Items.ContainsKey(kv.Key));
+                foreach (var kv in toAdd)
+                {
+                    versions.MergeTagKey(kv.Key, kv.Value);
+                    var item = new ListViewItem(kv.Key) { Name = kv.Key };
+                    item.SubItems.Add(kv.Value.ToString());
+                    ListTagKeys.Items.Add(item);
+                }
+            }
+            catch { }
         }
 
         private async void MainForm_Shown(object sender, EventArgs e)
