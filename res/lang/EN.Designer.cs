@@ -154,6 +154,15 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
+        ///   查找类似 The connection to process {0} has been lost! 的本地化字符串。
+        /// </summary>
+        internal static string MsgConnectionLost {
+            get {
+                return ResourceManager.GetString("MsgConnectionLost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Failed to dump versions.json from 26236578.blk!
         ///Error: {0} 的本地化字符串。
         /// </summary>

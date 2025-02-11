@@ -154,6 +154,15 @@ namespace GI_VideoVersions.res.lang {
         }
         
         /// <summary>
+        ///   查找类似 进程 {0} 连接已中断！ 的本地化字符串。
+        /// </summary>
+        internal static string MsgConnectionLost {
+            get {
+                return ResourceManager.GetString("MsgConnectionLost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 从 26236578.blk 获取 versions.json 失败！
         ///错误: {0} 的本地化字符串。
         /// </summary>

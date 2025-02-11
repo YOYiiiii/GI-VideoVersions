@@ -63,6 +63,25 @@ namespace GI_VideoVersions
             }
             finally { BtnConnect.Enabled = true; }
 
+            try
+            {
+                VideoVersionInfo.InitVideoFiles(process);
+                var result = await PipeMessage.NotifyListDump();
+                if (result is null || result.Length == 0)
+                    return false;
+                var other = VideoVersions.FromJson(result);
+                other.TrimVersions();
+                versions.MergeFrom(other);
+                versions.SortVersions();
+            }
+            catch (Exception ex)
+            {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgDumpListFail")!, ex.Message));
+                Disconnect();
+                return false;
+            }
+
             genshinProc = process;
             LabStatusText.Text = Config.LoadString("TxtConnected");
             LabStatusText.ForeColor = Color.Green;
@@ -100,33 +119,22 @@ namespace GI_VideoVersions
                 if (await TryConnectTo(process))
                     break;
             }
-            if (genshinProc is null) return;
-
-            try
-            {
-                VideoVersionInfo.InitVideoFiles(genshinProc);
-                var result = await PipeMessage.NotifyListDump();
-                var other = VideoVersions.FromJson(result);
-                other.TrimVersions();
-                versions.MergeFrom(other);
-                versions.SortVersions();
-            }
-            catch (Exception ex)
-            {
-                Utils.ShowError(string.Format(
-                    Config.LoadString("MsgDumpListFail")!, ex.Message));
-                Disconnect();
-            }
         }
 
         private async void CheckGenshinConnect()
         {
             var result = await PipeMessage.NotifyKeyDump();
-            if (result is null || result.Length == 0)
+            if (result is null)
             {
+                Utils.ShowError(string.Format(
+                    Config.LoadString("MsgConnectionLost")!,
+                    genshinProc!.Id));
                 Disconnect();
                 return;
             }
+
+            if (result.Length == 0)
+                return;
             try
             {
                 var dict = JsonSerializer

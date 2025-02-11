@@ -150,6 +150,9 @@ Please confirm that all keys dumped have been saved!</value>
     <value>Failed to connect to process: {0}!
 Error: {1}</value>
   </data>
+  <data name="MsgConnectionLost" xml:space="preserve">
+    <value>The connection to process {0} has been lost!</value>
+  </data>
   <data name="MsgDumpListFail" xml:space="preserve">
     <value>Failed to dump versions.json from 26236578.blk!
 Error: {0}</value>

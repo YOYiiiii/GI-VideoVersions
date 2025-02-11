@@ -150,6 +150,9 @@
     <value>连接到进程 {0} 失败！
 错误：{1}</value>
   </data>
+  <data name="MsgConnectionLost" xml:space="preserve">
+    <value>进程 {0} 连接已中断！</value>
+  </data>
   <data name="MsgDumpListFail" xml:space="preserve">
     <value>从 26236578.blk 获取 versions.json 失败！
 错误: {0}</value>
