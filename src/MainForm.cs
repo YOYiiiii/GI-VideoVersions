@@ -102,7 +102,7 @@ namespace GI_VideoVersions
             BtnDisconnect.Visible = false;
         }
 
-        private async void CheckGenshinProcess()
+        private async Task CheckGenshinProcess()
         {
             if (!string.IsNullOrEmpty(TxtProcessId.Text))
                 return;
@@ -121,7 +121,7 @@ namespace GI_VideoVersions
             }
         }
 
-        private async void CheckGenshinConnect()
+        private async Task CheckGenshinConnect()
         {
             var result = await PipeMessage.NotifyKeyDump();
             if (result is null)
@@ -158,9 +158,9 @@ namespace GI_VideoVersions
             while (true)
             {
                 if (genshinProc is null)
-                    CheckGenshinProcess();
+                    await CheckGenshinProcess();
                 else
-                    CheckGenshinConnect();
+                    await CheckGenshinConnect();
 
                 await Task.Delay(2000);
             }
