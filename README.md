@@ -25,3 +25,4 @@ Dump the key to the USM cutscenes of a certain anime game.
 4. 获取 key 成功，你可以直接通过右键单击需要的 key 以复制。
 5. 通过 **合并...** 按钮，可以选择一个过往版本的 **versions.json** 文件以合并到当前获取的密钥中。
 6. 通过 **导出...** 按钮，可以一键生成包含当前获取 key 及被合并的所有 key 的 **versions.json** 文件。
+嘿嘿
